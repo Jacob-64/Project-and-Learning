@@ -1,0 +1,103 @@
+**Installing Heimdall on Docker:**
+
+```markdown
+# Installing Heimdall on Docker
+
+Heimdall is a way to organize all those links to your most used websites and web applications in a simple way. It is a homepage for your web applications.
+
+## Prerequisites
+
+Ensure you have Docker installed on your system. You can check this by running:
+
+```bash
+docker --version
+```
+
+If Docker is not installed, follow the instructions on the [official Docker installation page](https://docs.docker.com/get-docker/) to install Docker.
+
+## Step-by-Step Installation
+
+### Step 1: Create Docker Compose File
+
+Create a file named `docker-compose.yml` in your desired directory and paste the following configuration into the file:
+
+```yaml
+version: "2.1"
+services:
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - ./config:/config
+    ports:
+      - 8080:80
+      - 8443:443
+    restart: unless-stopped
+```
+
+### Step 2: Adjust Environment Variables
+
+Ensure you adjust the environment variables (`PUID`, `PGID`, and `TZ`) as per your requirements:
+
+- **PUID**: User ID of the user running the container (you can find it by running `id -u` in your terminal).
+- **PGID**: Group ID of the user running the container (you can find it by running `id -g` in your terminal).
+- **TZ**: Timezone (set to `America/New_York` for US Eastern Standard Time).
+
+### Step 3: Run Docker Compose
+
+Navigate to the directory containing your `docker-compose.yml` file and run the following command to start the Heimdall service:
+
+```bash
+docker-compose up -d
+```
+
+This command will download the necessary Docker image and start the container.
+
+### Step 4: Access Heimdall
+
+Open your web browser and navigate to `http://localhost:8080`. You should see the Heimdall homepage.
+
+### Step 5: Persist Configuration
+
+The configuration for Heimdall will be stored in the `./config` directory relative to where your `docker-compose.yml` file is located. Ensure this directory exists and has the correct permissions.
+
+## Example Commands
+
+Below are the commands provided in one block for easy copy-pasting:
+
+```bash
+# Create a Docker Compose file with the following content
+cat <<EOF > docker-compose.yml
+version: "2.1"
+services:
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - ./config:/config
+    ports:
+      - 8080:80
+      - 8443:443
+    restart: unless-stopped
+EOF
+
+# Start Heimdall using Docker Compose
+docker-compose up -d
+```
+
+## Additional Information
+
+For more details and advanced configurations, refer to the official [Heimdall Documentation](https://heimdall.site/).
+
+By following these steps, you will have Heimdall set up and running using Docker, allowing you to organize your web applications efficiently.
+```
+
+This comprehensive guide provides a clear, step-by-step process for installing Heimdall on Docker. You can copy and paste this into your README.md file on GitHub.
