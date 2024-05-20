@@ -1,0 +1,119 @@
+Installing Pi-hole on Docker:
+
+```markdown
+# Installing Pi-hole on Docker
+
+Pi-hole is a network-wide ad blocker that can be installed on Docker. This guide provides the steps to install and set up Pi-hole on a Docker container.
+
+## Prerequisites
+
+Ensure you have Docker installed on your system. You can check this by running:
+
+```bash
+docker --version
+```
+
+If Docker is not installed, follow the instructions on the [official Docker installation page](https://docs.docker.com/get-docker/) to install Docker.
+
+## Step-by-Step Installation
+
+### Step 1: Create Docker Compose File
+
+Create a file named `docker-compose.yml` in your desired directory and paste the following configuration into the file:
+
+```yaml
+version: "3"
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    environment:
+      TZ: 'America/New_York'
+      WEBPASSWORD: 'yourpassword'  # Set your desired web interface password here
+    volumes:
+      - './pihole:/etc/pihole'
+      - './dnsmasq.d:/etc/dnsmasq.d'
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8081:80/tcp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+```
+
+### Step 2: Adjust Environment Variables
+
+Ensure you adjust the environment variables (`TZ` and `WEBPASSWORD`) as per your requirements:
+
+- **TZ**: Timezone (set to `America/New_York` for US Eastern Standard Time or your local timezone).
+- **WEBPASSWORD**: Password for the Pi-hole web interface.
+
+### Step 3: Create Necessary Directories
+
+Create the directories for Pi-hole to store its configuration files:
+
+```bash
+mkdir -p pihole dnsmasq.d
+```
+
+### Step 4: Run Docker Compose
+
+Navigate to the directory containing your `docker-compose.yml` file and run the following command to start the Pi-hole service:
+
+```bash
+docker-compose up -d
+```
+
+This command will download the necessary Docker image and start the container.
+
+### Step 5: Access Pi-hole Web Interface
+
+Open your web browser and navigate to `http://<your-docker-host-ip>:8081`. You should see the Pi-hole web interface.
+
+### Step 6: Configure Your Network
+
+To use Pi-hole as your DNS server, you need to configure your router or individual devices to use the Docker host's IP address as the DNS server.
+
+## Example Commands
+
+Below are the commands provided in one block for easy copy-pasting:
+
+```bash
+# Create a Docker Compose file with the following content
+cat <<EOF > docker-compose.yml
+version: "3"
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    environment:
+      TZ: 'America/New_York'
+      WEBPASSWORD: 'yourpassword'
+    volumes:
+      - './pihole:/etc/pihole'
+      - './dnsmasq.d:/etc/dnsmasq.d'
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "8081:80/tcp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+EOF
+
+# Create necessary directories
+mkdir -p pihole dnsmasq.d
+
+# Start Pi-hole using Docker Compose
+docker-compose up -d
+```
+
+## Additional Information
+
+For more details and advanced configurations, refer to the official [Pi-hole Documentation](https://docs.pi-hole.net/).
+
+By following these steps, you will have Pi-hole set up and running on Docker, allowing you to block ads across your entire network.
+```
+
+This comprehensive guide provides clear, step-by-step instructions for installing Pi-hole on Docker. You can copy and paste this into your README.md file on GitHub.
