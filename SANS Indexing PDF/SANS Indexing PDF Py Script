@@ -1,1 +1,113 @@
+import os
+import glob
+import pdfplumber
+from dotenv import load_dotenv
+import openai
+import pandas as pd
+from collections import defaultdict
+import time
+
+# Load environment variables from .env file
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+PDF_PASSWORD = os.getenv('PDF_PASSWORD')
+
+# Initialize OpenAI client
+openai.api_key = OPENAI_API_KEY
+
+def parse_line(line):
+    """Parse a line to extract a term and definition."""
+    if ':' in line:
+        term, definition = line.split(':', 1)
+    elif ' - ' in line:
+        term, definition = line.split(' - ', 1)
+    else:
+        parts = line.split(',', 1)
+        if len(parts) == 2:
+            term, definition = parts
+        else:
+            return None, None  # Unable to parse line
+    return term.strip(), definition.strip()
+
+def process_pdf(pdf_path):
+    """Process each page in the PDF to extract key terms and definitions."""
+    index = defaultdict(lambda: {'pages': set(), 'definition': ''})
+    
+    # Open PDF using pdfplumber
+    with pdfplumber.open(pdf_path, password=PDF_PASSWORD) as pdf:
+        for page_number, page in enumerate(pdf.pages):
+            text = page.extract_text()
+            
+            # Skip pages without text
+            if not text:
+                continue
+            
+            print(f'Processing page {page_number} in {os.path.basename(pdf_path)}...')
+            
+            # Create prompt for OpenAI
+            prompt = (
+                f"Your task is to analyze a single page from a SANS textbook, focusing specifically on Cloud, "
+                f"Cybersecurity, and Threat Detection. Identify the most crucial term or concept on this page. "
+                f"If the page lacks substantive material or is a title page, respond with 'none'. The selected term "
+                f"must be concise, relevant, and crucial to the content of the page, no more than 3-4 words, and "
+                f"include a comprehensive definition of 10-25 words. Here is the page content:\n\n{text}"
+            )
+            
+            try:
+                # Send request to OpenAI
+                response = openai.ChatCompletion.create(
+                    model="gpt-4-turbo",
+                    messages=[{"role": "system", "content": "You are a knowledgeable assistant helping to index a book."},
+                              {"role": "user", "content": prompt}],
+                    max_tokens=1024,
+                    temperature=0.5
+                )
+
+                response_text = response.choices[0].message['content'].strip()
+                lines = response_text.split('\n')
+
+                for line in lines:
+                    term, definition = parse_line(line)
+                    if term and definition and term.lower() != 'none':
+                        index[term]['pages'].add(page_number)
+                        if not index[term]['definition']:
+                            index[term]['definition'] = definition
+                    elif term or definition:
+                        print(f"Partial or unclear match: '{line}'")
+
+            except openai.error.RateLimitError:
+                print("Rate limit exceeded. Waiting before retrying...")
+                time.sleep(60)  # Wait for 60 seconds before retrying
+
+    return index
+
+def convert_to_csv(index, output_path):
+    """Convert extracted data to a DataFrame and save as CSV."""
+    df = pd.DataFrame(
+        [(term, ', '.join(map(str, sorted(data['pages']))), data['definition']) for term, data in index.items()],
+        columns=['Term', 'Pages', 'Definition']
+    )
+    
+    df.to_csv(output_path, index=False)
+    print(f"CSV saved to {output_path}")
+
+def main():
+    """Main function to process PDFs and convert extracted data to CSV."""
+    # Define directory for PDF files
+    pdf_files = glob.glob('./Books/FOR500_[BW]*.pdf')
+
+    # Process each PDF file
+    for pdf_path in pdf_files:
+        print(f"Processing {pdf_path}...")
+        
+        index = process_pdf(pdf_path)
+        
+        # Define output CSV file path
+        output_csv_path = pdf_path.replace('.pdf', '.csv').split('/')[-1]
+        
+        # Convert index to CSV
+        convert_to_csv(index, output_csv_path)
+
+if __name__ == "__main__":
+    main()
 
