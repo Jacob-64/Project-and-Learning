@@ -17,7 +17,8 @@ nmap -p$ports -Pn -sC -sV 10.10.10.245
 **Results**:
 - Open Ports: 21 (FTP), 22 (SSH), 80 (HTTP)
 
-![Nmap Scan Results](../images/1%20Nmap%20Scan.jpg)
+![Nmap Scan Results](https://github.com/user-attachments/assets/c6fb655e-c500-40e1-b10d-a3e90491c67e)
+)
 
 The HTTP service is running **Gunicorn**, a Python-based HTTP server. No anonymous FTP access is available.
 
