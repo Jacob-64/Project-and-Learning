@@ -10,8 +10,7 @@ Here’s how you can add these images to the **Cap** write-up on your GitHub pag
 ## Nmap
 Start with an nmap scan to check open ports and services:
 ```bash
-ports=$(nmap -p- --min-rate=1000 -Pn -T4 10.10.10.245 | grep '^[0-9]' | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//)
-nmap -p$ports -Pn -sC -sV 10.10.10.245
+nmap -sC -sV -Pn 10.129.219.24
 ```
 
 **Results**:
