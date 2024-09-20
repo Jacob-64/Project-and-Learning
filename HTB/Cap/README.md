@@ -1,5 +1,6 @@
 
-Here’s how you can add these images to the **Cap** write-up on your GitHub page. I'll integrate the images with captions in the appropriate places.
+![Image](https://github.com/user-attachments/assets/588b8611-9c83-4c92-8812-286caff49e23)
+
 
 ### Write-up: **Hack The Box - Cap**
 
