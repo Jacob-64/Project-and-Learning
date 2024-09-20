@@ -1,1 +1,56 @@
 
+from PIL import Image, ImageDraw, ImageFont
+import os
+
+# Path to the single image file
+image_path = r'C:\Users\jacob\OneDrive\Desktop\RPUID 1105580_Interior.jpg'
+
+# Output directory (same as input directory or a different one)
+output_dir = os.path.dirname(image_path)
+
+# Ask the user to input the date and time separately
+date_part = input("Please enter the date for the date stamp (e.g., '08 June 2021'): ")
+time_part = input("Please enter the time for the date stamp (e.g., '14:32'): ")
+
+# Try loading Arial font by name; fallback to default font if not found
+try:
+    font = ImageFont.truetype("arial.ttf", 50)  # Keep the font size as 124 for visibility
+except IOError:
+    print("Arial font not found. Falling back to default font.")
+    font = ImageFont.load_default()
+
+# Define the color and margins for the date text
+color = (255, 140, 0)  # RGB code for orange
+margin_right = 60
+margin_bottom = 60
+
+try:
+    with Image.open(image_path) as img:
+        d = ImageDraw.Draw(img)
+        width, height = img.size
+
+        # Position for the date text
+        date_pos = (width - margin_right - 300, height - margin_bottom - 100)
+        # Position for the time text, slightly below the date text
+        time_pos = (width - margin_right - 300, height - margin_bottom - 50)
+
+        # Drawing the date text multiple times to simulate bold effect
+        offsets = [(1, 1), (-1, -1), (1, -1), (-1, 1)]  # Offsets to simulate bold
+        for x_offset, y_offset in offsets:
+            bold_date_pos = (date_pos[0] + x_offset, date_pos[1] + y_offset)
+            d.text(bold_date_pos, date_part, fill=color, font=font)
+
+            bold_time_pos = (time_pos[0] + x_offset, time_pos[1] + y_offset)
+            d.text(bold_time_pos, time_part, fill=color, font=font)
+
+        # Draw the base texts last to ensure they are on top
+        d.text(date_pos, date_part, fill=color, font=font)
+        d.text(time_pos, time_part, fill=color, font=font)
+
+        # Define the path for the modified image, using the original file name in the new location
+        modified_image_path = os.path.join(output_dir, os.path.basename(image_path))
+
+        # Save the new image
+        img.save(modified_image_path)
+except Exception as e:
+    print(f"Error processing {image_path}: {e}")
