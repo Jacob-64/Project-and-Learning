@@ -1,0 +1,16 @@
+import string
+from collections import deque
+#The outer part of the key
+outer = string.ascii_uppercase + "{}"
+inner = deque ("COSDHG{QNFUVWLEZYXPTKMR}ABJI")
+
+assert len(outer) == len(inner)
+
+msg= "insert cyfer here"
+
+for rotation in range(len(outer)):
+    inner.rotate(rotation)
+
+    lookup = dict(zip(outer, inner))
+
+    print("".join(lookup[c] for c in msg))
