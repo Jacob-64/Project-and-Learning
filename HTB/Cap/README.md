@@ -23,13 +23,24 @@ The HTTP service is running **Gunicorn**, a Python-based HTTP server. No anonymo
 ## HTTP Service
 Browsing the HTTP server shows a dashboard with network-related functionalities. Certain pages display the output of commands like `ifconfig` and `netstat`, indicating that system commands are being executed in the background.
 
-![Web Dashboard](../images/2%20Webpage.jpg)
-![Network Info on Web Dashboard](../images/3%20Web%20Dashboard.jpg)
+![Web Dashboard](https://github.com/user-attachments/assets/a4522c59-b984-4c5a-b034-f333a8cd5287)
+![Network Info on Web Dashboard](https://github.com/user-attachments/assets/b1433e2a-5252-43a3-9249-601240604ef2)
+![Security Snap Shot User 1](https://github.com/user-attachments/assets/bdd14d07-a31e-48ef-a82b-4012c122dab8)
+
+The usrl ends in a 1, there are two options both work. first you can just change the number to 0-2 etc and see what works. in this case changing the number to 0 will allow you to download a PCAP file which has infomration. Another method is to use `FFUF` and identify other account which might be accesed. below is the screen shot for what I used. 
+1[FFuF](https://github.com/user-attachments/assets/4943d366-defe-4745-91b8-12b9adea043a)
+
+
 ```
 
 #### **02-Foothold.md**
 ```markdown
 # Foothold
+
+## Wireshark
+
+Download the PCAP file for user 0 and run the following command
+
 
 ## IDOR Exploit
 While creating packet captures, the URL follows the pattern `/data/<id>`. Incrementing the `id` allows access to previous users’ packet captures, revealing a vulnerability known as **Insecure Direct Object Reference (IDOR)**.
