@@ -6,6 +6,6 @@ Projects
     * [SANS Indexing PDF Py Script](https://github.com/Jacob-64/Project-and-Learning/tree/Python-Files/SANS%20Indexing%20PDF)
     * [Impose Date Time Stamp On Photo](https://github.com/Jacob-64/Project-and-Learning/tree/Python-Files/Impose%20Date%20Time%20Stamp%20On%20Photo)
 
- -Hack The Box
+ Hack The Box
  
 
