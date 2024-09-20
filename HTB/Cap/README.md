@@ -12,8 +12,6 @@ Start with an nmap scan to check open ports and services:
 ```bash
 nmap -sC -sV -Pn 10.129.219.24
 ```
-```
-
 **Results**:
 - Open Ports: 21 (FTP), 22 (SSH), 80 (HTTP)
 
