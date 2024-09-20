@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 # Path to the single image file
-image_path = r'C:\Users\jacob\OneDrive\Desktop\RPUID 1105580_Interior.jpg'
+image_path = r'path\to\your\image'
 
 # Output directory (same as input directory or a different one)
 output_dir = os.path.dirname(image_path)
